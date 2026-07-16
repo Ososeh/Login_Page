@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore Registration Form</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 450px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .terms-box {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .terms-box input {
+      width: auto;
+    }
+
+    .terms-box label {
+      margin-top: 0;
+      font-weight: normal;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 25px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+
+    .success {
+      color: green;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Create Account</h1>
+    <p class="subtitle">
+      Register to shop gadgets, laptops, phones and gaming accessories.
+    </p>
+
+    <form id="registrationForm">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" placeholder="Enter your full name">
+      <p id="fullNameError" class="error"></p>
+
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Choose a username">
+      <p id="usernameError" class="error"></p>
+
+      <label for="email">Email Address</label>
+      <input type="text" id="email" placeholder="Enter your email address">
+      <p id="emailError" class="error"></p>
+
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" placeholder="Enter your phone number">
+      <p id="phoneError" class="error"></p>
+
+      <label for="gender">Gender</label>
+      <select id="gender">
+        <option value="">Select gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <p id="genderError" class="error"></p>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Create a strong password">
+      <p id="passwordError" class="error"></p>
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" placeholder="Confirm your password">
+      <p id="confirmPasswordError" class="error"></p>
+
+      <div class="terms-box">
+        <input type="checkbox" id="terms">
+        <label for="terms">I agree to the terms and conditions</label>
+      </div>
+      <p id="termsError" class="error"></p>
+
+      <button type="submit">Register</button>
+
+      <p id="successMessage" class="success"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("registrationForm");
+
+    const getValue = id => document.getElementById(id).value.trim();
+
+    const getRawValue = id => document.getElementById(id).value;
+
+    const showError = (id, message) => {
+      document.getElementById(id).innerHTML = message;
+    };
+
+    const clearMessages = () => {
+      const messageIds = [
+        "fullNameError",
+        "usernameError",
+        "emailError",
+        "phoneError",
+        "genderError",
+        "passwordError",
+        "confirmPasswordError",
+        "termsError",
+        "successMessage"
+      ];
+
+      messageIds.forEach(id => {
+        document.getElementById(id).innerHTML = "";
+      });
+    };
+
+    const validateEmail = email => {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailPattern.test(email);
+    };
+
+    const validatePhone = phone => {
+      const phonePattern = /^[0-9]{11}$/;
+      return phonePattern.test(phone);
+    };
+
+    const validatePassword = password => {
+      const passwordRules = [
+        {
+          isValid: password !== "",
+          message: "Password is required"
+        },
+        {
+          isValid: password.length >= 8,
+          message: "Password must be at least 8 characters"
+        },
+        {
+          isValid: /[A-Z]/.test(password),
+          message: "Password must contain at least one uppercase letter"
+        },
+        {
+          isValid: /[a-z]/.test(password),
+          message: "Password must contain at least one lowercase letter"
+        },
+        {
+          isValid: /[0-9]/.test(password),
+          message: "Password must contain at least one number"
+        },
+        {
+          isValid: /[!@#$%^&*_\-+=?]/.test(password),
+          message: "Password must contain at least one special character like ! @ # $ % ^ & * _ - + = ?"
+        }
+      ];
+
+      const failedRule = passwordRules.find(rule => rule.isValid === false);
+
+      return failedRule?.message ?? "valid";
+    };
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      clearMessages();
+
+      const fullName = getValue("fullName");
+      const username = getValue("username");
+      const email = getValue("email");
+      const phone = getValue("phone");
+      const gender = getValue("gender");
+      const password = getRawValue("password");
+      const confirmPassword = getRawValue("confirmPassword");
+      const agreedToTerms = document.getElementById("terms").checked;
+
+      const submittedData = {
+        fullName,
+        username,
+        email,
+        phone,
+        gender,
+        password,
+        confirmPassword,
+        agreedToTerms
+      };
+
+      const validationErrors = [];
+
+      if (fullName === "") {
+        validationErrors.push({
+          field: "fullNameError",
+          message: "Full name is required"
+        });
+      } else if (fullName.length < 3) {
+        validationErrors.push({
+          field: "fullNameError",
+          message: "Full name must be at least 3 characters"
+        });
+      }
+
+      if (username === "") {
+        validationErrors.push({
+          field: "usernameError",
+          message: "Username is required"
+        });
+      } else if (username.length < 3) {
+        validationErrors.push({
+          field: "usernameError",
+          message: "Username must be at least 3 characters"
+        });
+      }
+
+      if (email === "") {
+        validationErrors.push({
+          field: "emailError",
+          message: "Email address is required"
+        });
+      } else if (!validateEmail(email)) {
+        validationErrors.push({
+          field: "emailError",
+          message: "Please enter a valid email address"
+        });
+      }
+
+      if (phone === "") {
+        validationErrors.push({
+          field: "phoneError",
+          message: "Phone number is required"
+        });
+      } else if (!validatePhone(phone)) {
+        validationErrors.push({
+          field: "phoneError",
+          message: "Phone number must contain 11 digits"
+        });
+      }
+
+      if (gender === "") {
+        validationErrors.push({
+          field: "genderError",
+          message: "Please select your gender"
+        });
+      }
+
+      const passwordMessage = validatePassword(password);
+
+      if (passwordMessage !== "valid") {
+        validationErrors.push({
+          field: "passwordError",
+          message: passwordMessage
+        });
+      }
+
+      if (confirmPassword === "") {
+        validationErrors.push({
+          field: "confirmPasswordError",
+          message: "Please confirm your password"
+        });
+      } else if (password !== confirmPassword) {
+        validationErrors.push({
+          field: "confirmPasswordError",
+          message: "Passwords do not match"
+        });
+      }
+
+      if (!agreedToTerms) {
+        validationErrors.push({
+          field: "termsError",
+          message: "You must agree to the terms and conditions"
+        });
+      }
+
+      validationErrors.forEach(error => {
+        showError(error.field, error.message);
+      });
+
+      const isValid = validationErrors.length === 0;
+
+      console.log("Form submission started");
+      console.log("Submitted data:", submittedData);
+
+      if (isValid) {
+        const registeredUser = {
+          fullName,
+          username,
+          email,
+          phone,
+          gender,
+          agreedToTerms,
+          role: "customer",
+          createdAt: new Date().toLocaleString()
+        };
+
+        document.getElementById("successMessage").innerHTML =
+          `Registration successful! Welcome to TechStore, ${fullName}.`;
+
+        console.log("Validation status: Passed");
+        console.log("Submission outcome: Registration successful");
+        console.log("Registered user:", registeredUser);
+
+        form.reset();
+      } else {
+        console.log("Validation status: Failed");
+        console.log("Submission outcome: Registration failed");
+        console.log("Validation errors:", validationErrors);
+      }
+
+      console.log("Form submission ended");
+    });
+  </script>
+
+</body>
+</html>
